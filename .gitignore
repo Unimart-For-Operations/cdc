@@ -1,0 +1,21 @@
+# Obsidian machine-local state
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/hotkeys.json
+
+# Obsidian caches and snapshots
+.obsidian/cache/
+.obsidian/snapshots/
+
+# Obsidian plugin-specific files (state/cache)
+.obsidian/plugins/*/data.json
+
+# macOS metadata
+.DS_Store
+._*
+
+# Windows metadata
+Thumbs.db
+
+# Temporary Office lock files
+~$*
