@@ -1,12 +1,12 @@
 ---
 source: idpbuilder
-synced: 2026-04-09
+synced: 2026-04-10
 ---
 # idpbuilder
 
 Private fork of [cnoe-io/idpbuilder](https://github.com/cnoe-io/idpbuilder) — a Kubernetes-based Internal Developer Platform builder. The GitHub fork relationship was intentionally broken to allow private hosting.
 
-> **Org membership:** This repo is tracked as a git submodule in [idpbuilder/meta](https://github.com/idpbuilder/meta). See the meta repo's `Architecture/` for cross-repo contracts and ADRs.
+> **Org context:** Part of the [idpbuilder](https://github.com/idpbuilder) org, coordinated through the [meta](https://github.com/idpbuilder/meta) repo. Read meta's `AGENTS.md` for the full org map, conventions, roadmap, and cross-repo contracts (`Architecture/`). Sibling repos: **cmdr** (Nix workstation config), **idpctl** (deprecated CLI → unimart), **docs** (doc hub, transitional), **cdc** (Obsidian vault).
 
 ## Architecture
 
@@ -19,6 +19,10 @@ Three-stage manifest pipeline: build time (kustomize/helm generate) → compile 
 
 See [docs/Architecture/README.md](docs/Architecture/README.md) for the full design.
 
+## Prerequisites
+
+Running idpbuilder locally requires: Docker (or Colima on macOS), Kind, kubectl. The `idpctl doctor` / `unimart freezer doctor` commands check for these.
+
 ## Key Commands
 
 ```bash
@@ -29,7 +33,7 @@ make embedded-resources  # Regenerate embedded manifests from hack/ scripts
 make fetch-upstream      # Fetch latest from cnoe-io/idpbuilder
 make upstream-status     # Show ahead/behind counts vs upstream
 make cherry-pick COMMIT=<sha>  # Cherry-pick a specific upstream commit
-make sync-docs           # Sync docs to hub + Obsidian
+make sync-docs           # Sync docs to cdc vault
 ```
 
 ## Upstream Management
@@ -42,11 +46,12 @@ Changes from upstream are cherry-picked, not merged. Load the `upstream-mgmt` sk
 
 | Path | Purpose |
 |------|---------|
-| `hack/` | Manifest generation scripts per component |
-| `pkg/controllers/` | The three reconcilers |
-| `pkg/controllers/localbuild/resources/` | Generated embedded manifests (do NOT edit) |
+| `api/` | CRD type definitions (`Localbuild`, `GitRepository`, `CustomPackage`) |
+| `hack/` | Manifest generation scripts per component (ArgoCD, Gitea, nginx, etc.) |
+| `pkg/controllers/` | The three reconcilers (one per CRD kind) |
+| `pkg/controllers/localbuild/resources/` | Generated embedded manifests (do NOT edit — regenerate via `make embedded-resources`) |
 | `pkg/build/build.go` | Main orchestration (`Build.Run()`) |
-| `api/` | CRD type definitions |
+| `cmd/` | CLI entry point (`create`, `get`, `delete` subcommands) |
 
 ## Code Style
 

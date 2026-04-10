@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-04-09
+synced: 2026-04-10
 ---
 # CI Strategy
 
@@ -17,23 +17,35 @@ Both are designed to gracefully degrade: if a tool is missing (e.g., outside the
 
 ## Pre-commit Hook
 
-Installed via `make hooks` (writes to `.git/hooks/pre-commit`). Runs three checks in order:
+Deployed globally via `unimart deli switch` (Nix-managed, installed to `~/.githooks/`). Runs these checks in order:
 
 | Check | Tool | What it validates |
 |-------|------|-------------------|
+| Nix formatting | `nix fmt` | All `.nix` files are formatted (if `flake.nix` exists) |
+| Go formatting | `go fmt` | All `.go` files are formatted (if `go.mod` exists) |
+| Go vet | `go vet` | Static analysis of Go code (if `go.mod` exists) |
 | Secret scanning | `gitleaks` | No secrets in staged changes |
-| Nix formatting | `nix fmt` | All `.nix` files are formatted |
-| Flake evaluation | `nix flake check` | All configurations evaluate cleanly |
+| Theme lint | cmdr-specific | Theme consistency (if cmdr theme script exists) |
 
 If any check fails, the commit is aborted. If a tool isn't available, that check is skipped with a warning.
 
-### Installing
+### Deployment
+
+Hooks are deployed automatically when applying the Nix configuration:
 
 ```bash
-make hooks
+unimart deli switch
 ```
 
-Re-run this after pulling changes to the hook script. The hook is not tracked by git (`.git/hooks/` is local-only), so each clone needs to run `make hooks` once.
+There is no `make hooks` target — hooks are Nix-managed and deployed globally to `~/.githooks/` via `core.hooksPath`. See meta's ADR-005 for the full gate architecture.
+
+### Additional Hook Types
+
+Beyond pre-commit, the hook system includes:
+
+- **commit-msg** — Validates conventional commit format, DCO sign-off, `## Changes` and `## Executive Summary` sections
+- **post-commit** — Syncs docs to cdc vault, creates commit-log entries, auto-commits the vault
+- **pre-push** — Runs `go build`, `go test`, and `nix flake check`
 
 ### Bypassing
 

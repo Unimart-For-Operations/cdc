@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-04-09
+synced: 2026-04-10
 ---
 # Theme System
 
@@ -316,7 +316,7 @@ Run `make switch`. All consumers update automatically.
 | bat | cli/graduated | toolThemes only | No |
 | lazygit | tui/graduated | toolThemes | No |
 | fzf | cli/graduated | core | No |
-| yazi | tui/graduated | core | No |
+| yazi | tui/graduated | core | Yes |
 
 ### Not themed (no visual config)
 

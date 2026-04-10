@@ -1,12 +1,14 @@
 ---
 source: idpctl
-synced: 2026-04-09
+synced: 2026-04-10
 ---
 # idpctl
 
-Go CLI tool for managing the [idpbuilder](https://github.com/idpbuilder/idpbuilder) development workspace lifecycle. Built with Cobra and Viper.
+> **DEPRECATED:** idpctl is being absorbed into [unimart](https://github.com/idpbuilder/meta) (`unimart freezer` commands). New features should be implemented in meta's `cmd/freezer_cmds.go`, not here. See the migration plan in meta's `AGENTS.md` (Phase 2: Port Freezer Commands).
 
-> **Org membership:** This repo is tracked as a git submodule in [idpbuilder/meta](https://github.com/idpbuilder/meta). See the meta repo's `Architecture/` for cross-repo contracts and ADRs.
+Go CLI tool for managing the [idpbuilder](https://github.com/idpbuilder/idpbuilder) development workspace lifecycle. Built with Cobra. Config is all Cobra flags + env vars + runtime auto-detection (no Viper, no config files).
+
+> **Org context:** Part of the [idpbuilder](https://github.com/idpbuilder) org, coordinated through the [meta](https://github.com/idpbuilder/meta) repo. Read meta's `AGENTS.md` for the full org map, conventions, roadmap, and cross-repo contracts (`Architecture/`). Sibling repos: **cmdr** (Nix workstation config), **idpbuilder** (K8s platform), **docs** (doc hub, transitional), **cdc** (Obsidian vault).
 
 ## What It Does
 
@@ -17,14 +19,19 @@ Manages the full IDP lifecycle: `doctor` (check prereqs) → `bootstrap` (instal
 ```
 cmd/          Cobra command definitions (one file per command)
 internal/
-├── builder/  Build, Create, Delete operations on idpbuilder binary
-├── cluster/  Kind cluster queries, ArgoCD app status, secrets
-├── colima/   Colima VM lifecycle, DOCKER_HOST management (macOS)
-├── prereqs/  Platform detection, tool install (Nix primary, Homebrew fallback)
-└── repos/    GitHub org repo listing, cloning, local status
+├── builder/    Build, Create, Delete operations on idpbuilder binary
+├── cluster/    Kind cluster queries, ArgoCD app status, secrets
+├── colima/     Colima VM lifecycle, DOCKER_HOST management (macOS)
+├── container/  Container runtime detection and management
+├── gitea/      Gitea API client, repo operations
+├── prereqs/    Platform detection, tool install (Nix primary, Homebrew fallback)
+├── repos/      GitHub org repo listing, cloning, local status
+└── theme/      Theme loading from cmdr (JSON export consumer)
 ```
 
 Platform-aware: detects macOS vs Linux at runtime. On macOS, manages Colima VM for Docker. On Linux, expects native Docker daemon.
+
+Dependencies are minimal: only `cobra` and `fatih/color` as direct deps. All external tool interaction is via shelling out to CLIs.
 
 ## Key Commands
 
@@ -45,7 +52,9 @@ idpctl expects a parent directory containing all org repos:
 ├── idpbuilder/                # main project (required)
 ├── idpctl/                    # this tool
 ├── cmdr/                      # nix workstation config
-└── docs/                      # org documentation
+├── docs/                      # org documentation
+└── unimart-employee-handbooks/
+    └── cdc/                   # Obsidian vault
 ```
 
 Detection: `--org-dir` flag → `IDPCTL_ORG_DIR` env → CWD auto-detect → `~/idpbuilder` fallback.
@@ -54,7 +63,6 @@ Detection: `--org-dir` flag → `IDPCTL_ORG_DIR` env → CWD auto-detect → `~/
 
 - **Go**: Standard conventions, `go fmt`, `go vet`
 - **Commits**: `git commit -s` (DCO sign-off required), conventional commits
-- **Releases**: GoReleaser via GitHub Actions on `v*.*.*` tags
 
 ## Further Reading
 

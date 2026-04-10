@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-04-09
+synced: 2026-04-10
 ---
 # Contributing Guide
 
@@ -70,7 +70,6 @@ cmdr/
 │           └── upmc/            # UPMC work configs
 ├── scripts/                     # Automation scripts
 │   ├── bootstrap.sh             # Idempotent prerequisites installer (Xcode CLT, Homebrew, Nix)
-│   ├── install-hooks.sh         # Pre-commit hook installer
 │   └── inject-frontmatter.sh   # Obsidian frontmatter injection for docs sync
 ├── containers/                  # Docker testing environment
 │   ├── Dockerfile               # Ubuntu 24.04 test image
@@ -373,7 +372,6 @@ make help              # Show all available commands
 make bootstrap         # Install prerequisites (Xcode CLT + Homebrew on macOS, Nix)
 make new-host ...      # Scaffold a new host from template
 make doctor            # Verify environment health (18 checks)
-make hooks             # Install pre-commit hooks (secrets, fmt, flake check)
 make ci                # Run full local CI suite
 make apply HOST=<name> # Deploy to any host (auto-detects platform)
 make switch            # Deploy to current host (auto-detects)
@@ -504,7 +502,6 @@ footer
 | `flake.lock` | Locked dependencies | Auto-generated, commit after updates |
 | `Makefile` | Ergonomic command interface | bootstrap, new-host, doctor, apply, diff, fmt, etc. |
 | `scripts/bootstrap.sh` | Prerequisites installer | Idempotent: Xcode CLT, Homebrew (macOS), Nix (all) |
-| `scripts/install-hooks.sh` | Pre-commit hook installer | Gitleaks + nix fmt + nix flake check |
 | `home/02-hosts/default.nix` | Discovery engine | Auto-scans hosts, resolves features, assembles modules |
 | `home/03-features/base.nix` | Universal baseline | stateVersion + home-manager, loaded by every host |
 | `home/03-features/cli.nix` | CLI feature | TTY-safe, non-interactive tools (shell, git, core-utils, cloud CLIs, runtimes) |
@@ -555,7 +552,7 @@ nvim --version                     # Verify tools
 
 All CI runs locally — there are no remote CI services.
 
-1. **Pre-commit hook** - Runs gitleaks, `nix fmt --check`, and `nix flake check` on every commit (`make hooks` to install)
+1. **Pre-commit hook** - Runs gitleaks, `go fmt`, `go vet`, `nix fmt --check`, and theme lint on every commit (deployed via `unimart deli switch`, Nix-managed)
 2. **`make ci`** - Full local CI suite: secrets + formatting + flake check + `make doctor`
 
 See [CI Strategy](../Reference/ci.md) for full details.

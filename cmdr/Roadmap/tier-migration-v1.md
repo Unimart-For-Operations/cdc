@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-04-09
+synced: 2026-04-10
 ---
 # Tier Migration v1 -- Original Plan (Historical Reference)
 

@@ -1,12 +1,12 @@
 ---
 source: cmdr
-synced: 2026-04-09
+synced: 2026-04-10
 ---
 # cmdr
 
 Declarative developer workstation managed by **Nix flakes** and **Home Manager**. Defines the complete environment (shell, editor, terminal, tools) for each physical machine the user owns.
 
-> **Org membership:** This repo is tracked as a git submodule in [idpbuilder/meta](https://github.com/idpbuilder/meta). See the meta repo's `Architecture/` for cross-repo contracts and ADRs.
+> **Org context:** Part of the [idpbuilder](https://github.com/idpbuilder) org, coordinated through the [meta](https://github.com/idpbuilder/meta) repo. Read meta's `AGENTS.md` for the full org map, conventions, roadmap, and cross-repo contracts (`Architecture/`). Sibling repos: **idpbuilder** (K8s platform), **idpctl** (deprecated CLI → unimart), **docs** (doc hub, transitional), **cdc** (Obsidian vault).
 
 ## Critical Concept
 
@@ -17,7 +17,7 @@ Declarative developer workstation managed by **Nix flakes** and **Home Manager**
 ```
 flake.nix                            Flake entry point
 home/
-├── 01-core/                         Base Home Manager config (always applied)
+├── 01-platforms/                     OS-specific config (darwin/linux)
 ├── 02-hosts/                        Per-machine host definitions
 │   └── <hostname>/
 │       ├── default.nix              Host entry point
@@ -27,13 +27,12 @@ home/
 │   ├── cli.nix                      CLI tool modules
 │   ├── tui.nix                      TUI tool modules
 │   └── gui.nix                      GUI application modules
-├── 04-modules/                      Tiered module tree
-│   ├── cli/{graduated,incubating,sandbox}/
-│   ├── tui/{graduated,incubating,sandbox}/
-│   ├── gui/{graduated,incubating,sandbox}/
-│   ├── work/                        Work-specific modules
-│   └── _shared/theme/              Catppuccin Frappe shared palette
-└── 05-platforms/                    OS-specific config (darwin/linux)
+└── 04-modules/                      Tiered module tree
+    ├── cli/{graduated,incubating,sandbox}/
+    ├── tui/{graduated,incubating,sandbox}/
+    ├── gui/{graduated,incubating,sandbox}/
+    ├── work/                        Work-specific modules
+    └── _shared/theme/              Catppuccin Frappe shared palette
 ```
 
 ## Tiered Module System
@@ -50,15 +49,15 @@ Load the `nix-modules` skill for the complete module inventory and host discover
 ## Key Commands
 
 ```bash
-make switch              # Apply config for this machine
-make doctor              # Check system health
-make bootstrap           # First-time setup
-make new-host            # Scaffold a new host definition
-make list                # List available hosts
+unimart deli switch      # Apply config for this machine (deploys hooks, packages, all config)
+unimart deli doctor      # Check system health
+unimart deli bootstrap   # First-time setup
+unimart deli hosts       # List available host configs
 make fmt                 # Format all Nix files
 make check               # Run flake checks
-make sync-docs           # Sync docs to hub + Obsidian
 ```
+
+**Hooks**: Git hooks are Nix-managed — deployed globally to `~/.githooks/` by `unimart deli switch`. There is no `make hooks` target. See meta's `AGENTS.md` for the full gate inventory and ADR-005.
 
 ## Code Style
 
