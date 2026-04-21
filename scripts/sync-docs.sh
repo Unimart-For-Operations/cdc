@@ -28,7 +28,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VAULT_ROOT="$(dirname "$SCRIPT_DIR")"
 ORG_DIR="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
 
-SYNC_DIRS=("cmdr" "idpctl" "idpbuilder")
+SYNC_DIRS=("cmdr" "idpbuilder" "meta")
 
 # Verify vault root
 if [ ! -f "$VAULT_ROOT/00-INDEX.md" ]; then
@@ -50,7 +50,12 @@ PULL_COUNT=0
 TOTAL_FILES=0
 
 for repo in "${SYNC_DIRS[@]}"; do
-	src="$ORG_DIR/$repo/docs"
+	# For meta repo, docs live at ORG_DIR/docs. For others, at ORG_DIR/$repo/docs
+	if [ "$repo" = "meta" ]; then
+		src="$ORG_DIR/docs"
+	else
+		src="$ORG_DIR/$repo/docs"
+	fi
 	if [ -d "$src" ]; then
 		printf "${YELLOW}!${RESET} Pulling %s/docs/ ...\n" "$repo"
 		mkdir -p "$VAULT_ROOT/$repo"
