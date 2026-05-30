@@ -1,6 +1,6 @@
 # cdc
 
-Documentation vault for the [idpbuilder](https://github.com/idpbuilder) organization.
+Generated employee handbook and documentation vault for the [idpbuilder](https://github.com/idpbuilder) organization.
 
 ## Synced Mirrors
 
@@ -10,13 +10,14 @@ These directories are mirrors of source repo `docs/` directories. **Do not edit 
 |-----------|--------|
 | [[cmdr/]] | [idpbuilder/cmdr](https://github.com/idpbuilder/cmdr) `docs/` |
 | [[idpbuilder/]] | [idpbuilder/idpbuilder](https://github.com/idpbuilder/idpbuilder) `docs/` |
-| [[idpctl/]] | [idpbuilder/idpctl](https://github.com/idpbuilder/idpctl) `docs/` |
+| [[meta/]] | [idpbuilder/meta](https://github.com/idpbuilder/meta) `docs/` |
 
 ## Hub Content
 
 | Directory | Description |
 |-----------|-------------|
 | [[Contributing/]] | Organization-wide contributing guides |
+| [[commit-log/]] | Auto-generated commit summaries |
 | [[templates/]] | Note templates (PRD, ADR, runbook, meeting) |
 
 ## Sync Pipeline
@@ -27,4 +28,6 @@ Source repos are the **source of truth**. The sync pipeline copies docs from eac
 source repo docs/ → rsync → cdc vault subdirectory → frontmatter injection
 ```
 
-Trigger sync via `unimart newsstand sync` or through pre-commit hooks in source repos.
+Trigger sync via `unimart newsstand sync` or through post-commit hooks in source repos.
+
+Obsidian is the preferred UI, but this vault is Markdown-first and should remain usable from a terminal.

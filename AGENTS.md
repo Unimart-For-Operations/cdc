@@ -1,12 +1,12 @@
 # cdc
 
-Obsidian vault and knowledge base for the [idpbuilder](https://github.com/idpbuilder) organization. Contains synced documentation mirrors from all source repos, plus org-native content (ADRs, runbooks, etc.).
+Obsidian vault and generated employee handbook for the [idpbuilder](https://github.com/idpbuilder) organization. Contains synced documentation mirrors from source repos, plus vault-native operational notes, ADRs, runbooks, templates, and commit logs.
 
 > **Org context:** Part of the [idpbuilder](https://github.com/idpbuilder) org, coordinated through the [meta](https://github.com/idpbuilder/meta) repo. Read meta's `AGENTS.md` for the full org map, conventions, roadmap, and cross-repo contracts (`Architecture/`). Sibling repos: **cmdr** (Nix workstation config), **idpbuilder** (K8s platform), **idpctl** (deprecated CLI → unimart), **docs** (legacy doc hub, being replaced by this vault).
 
 ## Critical Rule
 
-**Do NOT edit files in `cmdr/`, `idpbuilder/`, or `idpctl/` subdirectories directly.** These are synced mirrors from source repos. Edit the source repo's `docs/` directory instead, then run the sync pipeline. The sync will overwrite anything you put here.
+**Do NOT edit files in synced mirror directories directly.** These are overwritten by sync. Edit the source repo's `docs/` directory instead, then run the sync pipeline.
 
 ## What's Editable vs Mirrored
 
@@ -14,7 +14,7 @@ Obsidian vault and knowledge base for the [idpbuilder](https://github.com/idpbui
 |------|-----------|-------------|
 | `cmdr/` | NO — synced | Mirror of cmdr's docs/ |
 | `idpbuilder/` | NO — synced | Mirror of idpbuilder's docs/ |
-| `idpctl/` | NO — synced | Mirror of idpctl's docs/ |
+| `meta/` | NO — synced | Mirror of meta's docs/ |
 | `Contributing/` | YES | Vault-specific contributing docs |
 | `commit-log/` | YES (auto-generated) | Commit summaries with Dataview frontmatter, created by post-commit hook |
 | `templates/` | YES | Obsidian note templates (default, project-prd, meeting, adr, runbook) |
@@ -26,12 +26,12 @@ Obsidian vault and knowledge base for the [idpbuilder](https://github.com/idpbui
 
 ## Sync Pipeline
 
-The sync pipeline runs from `scripts/sync-docs.sh`:
+The sync pipeline runs from `scripts/sync-docs.sh` and is orchestrated by `unimart newsstand sync`:
 
 1. **Pull**: `rsync --delete` from each source repo's `docs/` → vault subdirectories
 2. **Frontmatter**: Inject YAML frontmatter (`source`, `synced` date) for Obsidian Dataview
 
-Frontmatter is committed to this repo (not ephemeral). Source repos are always the source of truth.
+Frontmatter is committed to this repo (not ephemeral). Source repos are always the source of truth for project docs. Vault-native notes are edited in the vault.
 
 ### Triggering Sync
 
@@ -43,7 +43,7 @@ make sync-docs
 # Automatic: post-commit hook syncs when docs/ files are in the commit,
 # creates commit-log entries from executive summaries, and auto-commits the vault
 
-# Direct
+# Direct from this vault
 bash scripts/sync-docs.sh
 ```
 
@@ -63,9 +63,11 @@ bash scripts/sync-docs.sh
 ├── Contributing/          Vault-specific docs
 ├── cmdr/                  Mirror of cmdr/docs/
 ├── idpbuilder/            Mirror of idpbuilder/docs/
-└── idpctl/                Mirror of idpctl/docs/
+└── meta/                  Mirror of meta/docs/
 ```
 
 ## Obsidian Configuration
 
 The `.obsidian/` directory lives in this repo's git history — it is NOT managed by Nix. Stock Obsidian config with no custom themes, plugins, or fonts.
+
+Obsidian is optional. Markdown files must remain readable and useful from a terminal.

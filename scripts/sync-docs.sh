@@ -30,6 +30,38 @@ ORG_DIR="$(dirname "$(dirname "$(dirname "$SCRIPT_DIR")")")"
 
 SYNC_DIRS=("cmdr" "idpbuilder" "meta")
 
+sync_meta_docs() {
+	local dest="$1"
+	local docs_src="${ORG_DIR}/docs"
+
+	# Reset the mirror first so removed files disappear even though meta is
+	# assembled from root files plus the legacy docs hub's meta-owned sections.
+	rm -rf "$dest"
+	mkdir -p "$dest"
+
+	# meta/docs is currently the legacy docs hub submodule. Only sync the
+	# meta-owned docs from its root; exclude mirrored repos, scripts, and git
+	# metadata so cdc/meta does not become a nested docs hub.
+	rsync -av --delete --delete-excluded \
+		--exclude='.git' \
+		--exclude='.gitignore' \
+		--exclude='Makefile' \
+		--exclude='cmdr/' \
+		--exclude='idpbuilder/' \
+		--exclude='idpctl/' \
+		--exclude='scripts/' \
+		"$docs_src/" "$dest/"
+
+	# Root-level control-plane docs are owned by meta and should be visible in
+	# the handbook even though they do not live under meta/docs. Overlay these
+	# after the docs sync so --delete cannot remove them.
+	for file in README.md AGENTS.md TOOLING.md PROVISIONING.md CHANGELOG.md; do
+		if [ -f "${ORG_DIR}/${file}" ]; then
+			rsync -av "${ORG_DIR}/${file}" "$dest/"
+		fi
+	done
+}
+
 # Verify vault root
 if [ ! -f "$VAULT_ROOT/00-INDEX.md" ]; then
 	printf "${RED}x${RESET} Vault root not found at: %s\n" "$VAULT_ROOT"
@@ -50,16 +82,21 @@ PULL_COUNT=0
 TOTAL_FILES=0
 
 for repo in "${SYNC_DIRS[@]}"; do
-	# For meta repo, docs live at ORG_DIR/docs. For others, at ORG_DIR/$repo/docs
+	# For meta, assemble root control-plane docs plus meta-owned docs. For
+	# others, source docs live at ORG_DIR/$repo/docs.
 	if [ "$repo" = "meta" ]; then
-		src="$ORG_DIR/docs"
+		src="$ORG_DIR"
 	else
 		src="$ORG_DIR/$repo/docs"
 	fi
 	if [ -d "$src" ]; then
 		printf "${YELLOW}!${RESET} Pulling %s/docs/ ...\n" "$repo"
 		mkdir -p "$VAULT_ROOT/$repo"
-		rsync -av --delete "$src/" "$VAULT_ROOT/$repo/"
+		if [ "$repo" = "meta" ]; then
+			sync_meta_docs "$VAULT_ROOT/$repo"
+		else
+			rsync -av --delete "$src/" "$VAULT_ROOT/$repo/"
+		fi
 		count=$(find "$VAULT_ROOT/$repo" -name '*.md' | wc -l | tr -d ' ')
 		TOTAL_FILES=$((TOTAL_FILES + count))
 		printf "  %s markdown files\n" "$count"

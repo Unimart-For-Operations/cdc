@@ -1,6 +1,6 @@
 ---
 source: idpbuilder
-synced: 2026-04-21
+synced: 2026-05-30
 ---
 # Pluggable and configurable packaging proposal
 

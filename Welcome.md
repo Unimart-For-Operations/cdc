@@ -1,5 +1,7 @@
-This is your new *vault*.
+# Welcome To The Handbook
 
-Make a note of something, [[create a link]], or try [the Importer](https://help.obsidian.md/Plugins/Importer)!
+This vault is the generated employee handbook for the idpbuilder control plane.
 
-When you're ready, delete this note and make the vault your own.
+Source repos document themselves in their own `docs/` directories. The sync pipeline mirrors those docs here, injects Obsidian-friendly frontmatter, and keeps the Markdown usable without Obsidian.
+
+Start with [[00-INDEX]].

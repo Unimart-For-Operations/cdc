@@ -1,37 +1,33 @@
-# docs
+# cdc contributing
 
-Documentation aggregation hub for the [idpbuilder](https://github.com/idpbuilder) GitHub organization. This repo **mirrors** documentation from source repos — it is not the source of truth.
+Generated employee handbook and Obsidian vault for the [idpbuilder](https://github.com/idpbuilder) GitHub organization. This repo mirrors documentation from source repos and also contains vault-native operational notes.
 
 > **Org membership:** This repo is tracked as a git submodule in [idpbuilder/meta](https://github.com/idpbuilder/meta). See the meta repo's `.docs-manifest.yml` for the pipeline contract.
 
 ## Critical Rule
 
-**Do NOT edit files in `cmdr/`, `idpbuilder/`, or `idpctl/` subdirectories directly.** These are synced mirrors. Edit the source repo's `docs/` directory instead, then run the sync pipeline.
+**Do NOT edit files in synced mirror directories directly.** Edit the source repo's `docs/` directory instead, then run the sync pipeline.
 
 ## How It Works
 
 Two-phase sync pipeline (`scripts/sync-docs.sh`):
 
-1. **Pull**: `rsync --delete` from each source repo's `docs/` → this repo's subdirectories
+1. **Pull**: `rsync --delete` from each source repo's `docs/` into this vault's mirror directories
 2. **Frontmatter**: Inject YAML frontmatter (`source`, `synced` date) directly into mirrored copies
 
-Obsidian reads this directory via symlink (`~/Documents/cmdr/Professional/idpbuilder` → here). Frontmatter is ephemeral local state — never committed, overwritten on every sync.
-
-Load the `docs-sync` skill for complete pipeline details.
+Frontmatter is committed to the vault. Obsidian is optional; Markdown must remain usable from a terminal.
 
 ## Triggering Sync
 
 ```bash
-# From this repo
-make sync
-
 # From the meta repo
+unimart newsstand sync
 make sync-docs
 
-# From any source repo
-make sync-docs
+# Automatic: post-commit hooks sync docs/ changes and auto-commit cdc
 
-# Automatic: pre-commit hooks trigger sync when docs/ files are staged
+# Direct from this vault
+bash scripts/sync-docs.sh
 ```
 
 ## Structure
@@ -40,15 +36,15 @@ make sync-docs
 ./
 ├── cmdr/                Mirror of cmdr/docs/
 ├── idpbuilder/          Mirror of idpbuilder/docs/
-├── idpctl/              Mirror of idpctl/docs/
-├── Contributing/        Hub-specific docs (not mirrored from any source)
+├── meta/                Mirror of meta/docs/
+├── Contributing/        Vault-specific docs
+├── commit-log/          Auto-generated commit summaries
 ├── scripts/
-│   ├── sync-docs.sh            Two-phase sync pipeline
-│   ├── inject-frontmatter.sh   Frontmatter injection for Obsidian
-│   └── hooks/
-│       └── pre-commit-docs-sync.sh  Shared pre-commit hook library
-├── README.md
-└── Makefile
+│   ├── sync-docs.sh
+│   └── inject-frontmatter.sh
+├── templates/
+├── 00-INDEX.md
+└── Welcome.md
 ```
 
 ## Key Paths
@@ -57,8 +53,10 @@ make sync-docs
 |------|-----------|-------------|
 | `cmdr/` | NO — synced | Mirror of cmdr's docs/ |
 | `idpbuilder/` | NO — synced | Mirror of idpbuilder's docs/ |
-| `idpctl/` | NO — synced | Mirror of idpctl's docs/ |
-| `Contributing/` | YES | Hub-specific contributing docs |
+| `meta/` | NO — synced | Mirror of meta's docs/ |
+| `Contributing/` | YES | Vault-specific docs |
+| `commit-log/` | YES | Auto-generated commit summaries |
 | `scripts/` | YES | Sync pipeline tooling |
-| `README.md` | YES | This repo's own README |
-| `Makefile` | YES | Sync and hook targets |
+| `templates/` | YES | Obsidian templates |
+| `00-INDEX.md` | YES | Vault map of content |
+| `Welcome.md` | YES | Vault landing page |
