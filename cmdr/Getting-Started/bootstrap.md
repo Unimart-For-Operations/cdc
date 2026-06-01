@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-30
+synced: 2026-05-31
 ---
 # Bootstrap Guide: New Machine Setup
 
@@ -25,7 +25,7 @@ By the end of this process, you'll have:
 - Starship prompt, Atuin history, direnv
 - Git with custom config and commit templates
 - Ghostty/Kitty/Alacritty terminal configurations
-- Rootless Podman container stack
+- Docker/Kind container stack for local IDP workflows
 - All dotfiles managed declaratively
 
 ---
@@ -187,8 +187,34 @@ make apply HOST=<name>    # Apply specific host
 
 ```bash
 exec zsh
+cmdr-bootstrap-docker-engine
 make doctor
 ```
+
+`cmdr-bootstrap-docker-engine` handles the Docker daemon boundary that Home Manager cannot own on non-NixOS Linux. It installs/enables Docker Engine with the OS package manager and adds your user to the `docker` group. Log out and back in after the group change. On macOS, it starts Colima.
+
+On Arch/CachyOS, installing Docker Engine may require a full pacman sync/upgrade. The helper does not run that implicitly because it can upgrade unrelated system packages. If Docker is missing, run `sudo pacman -Syu --needed docker` yourself, then rerun `cmdr-bootstrap-docker-engine` to enable the service and configure group membership.
+
+#### Non-NixOS Linux Maintenance Model
+
+On Arch/CachyOS, there are two package management layers:
+
+- `pacman` owns the operating system: kernel, systemd, firmware, desktop packages, bootloader integration, and rootful daemons like Docker Engine.
+- Nix/Home Manager owns the user environment: shells, dotfiles, editors, CLI tools, `unimart`, Docker CLI, Kind, and developer configuration.
+
+Use this operating rhythm:
+
+```bash
+# OS maintenance, run intentionally and reboot after kernel/systemd upgrades
+sudo pacman -Syu
+reboot
+
+# User environment convergence
+unimart deli switch
+unimart deli doctor
+```
+
+Do not treat `nix flake update` as routine OS maintenance. Run it only when intentionally updating cmdr's pinned Nix inputs.
 
 `make doctor` validates your environment:
 - Prerequisites (git, Homebrew, Nix, flakes)
@@ -208,7 +234,7 @@ cd ~/cmdr
 direnv allow
 ```
 
-The devShell provides pinned development tools: `nixpkgs-fmt`, `nil` (Nix LSP), `podman-compose`, `jq`.
+The devShell provides pinned development tools: `nixpkgs-fmt`, `nil` (Nix LSP), `jq`.
 
 ---
 

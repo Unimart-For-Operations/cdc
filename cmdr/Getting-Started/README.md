@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-30
+synced: 2026-05-31
 ---
 # Getting Started
 
@@ -51,7 +51,7 @@ After setup, you'll have:
 - ZSH with Starship prompt and Atuin history
 - Git with custom configuration
 - Terminal emulators (Ghostty, Kitty, Alacritty)
-- Rootless Podman container stack
+- Docker/Kind container stack for local IDP workflows
 - All dotfiles managed declaratively
 
 ## Next Steps

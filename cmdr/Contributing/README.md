@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-30
+synced: 2026-05-31
 ---
 # Contributing Guide
 
@@ -73,7 +73,7 @@ cmdr/
 │   └── inject-frontmatter.sh   # Obsidian frontmatter injection for docs sync
 ├── containers/                  # Docker testing environment
 │   ├── Dockerfile               # Ubuntu 24.04 test image
-│   └── podman-compose.yml       # Container orchestration
+│   └── compose.yml              # Container orchestration
 └── docs/                        # Project documentation
 ```
 

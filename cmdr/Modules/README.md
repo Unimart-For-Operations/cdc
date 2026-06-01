@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-30
+synced: 2026-05-31
 ---
 # Modules
 
@@ -11,7 +11,7 @@ Documentation for each module category, mirroring the `home/04-modules/` structu
 | Module | Description | Docs |
 |--------|-------------|------|
 | **Hosts** | Host discovery and configuration | [Hosts](Hosts/README.md) |
-| **Containers** | Podman container testing | [Containers](Containers/README.md) |
+| **Containers** | Docker/Kind runtime and container testing | [Containers](Containers/README.md) |
 | **TUI** | Terminal UI tools (Neovim, tmux) | [Neovim](TUI/nvim.md), [AstroNvim](TUI/nvim-astro.md), [Obsidian](TUI/nvim-astro-obsidian.md) |
 | **Work** | Employer-specific configs | [UPMC](Work/upmc.md) |
 

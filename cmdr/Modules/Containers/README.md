@@ -1,10 +1,10 @@
 ---
 source: cmdr
-synced: 2026-05-30
+synced: 2026-05-31
 ---
 # Container Testing Environment
 
-This directory contains Podman configurations for testing the Dev Control Plane in an isolated Ubuntu Linux environment.
+This directory contains Docker Compose configuration for testing the Dev Control Plane in an isolated Ubuntu Linux environment.
 
 ## Purpose
 
@@ -28,17 +28,13 @@ Your actual target hardware may be Arch/CachyOS, but the container validates tha
 
 ## Prerequisites
 
-Podman and podman-compose are managed by Home Manager via `home/04-modules/cli/graduated/containerization/default.nix`.
+Docker CLI and Kind are managed by Home Manager via `home/04-modules/cli/graduated/containerization/default.nix`.
 
-The Podman socket must be running before using containers:
+The Docker daemon must be running before using containers:
 
 ```bash
-# Enabled automatically via Home Manager (services.podman.enable = true)
-# To check status:
-systemctl --user status podman.socket
-
-# To start manually if needed:
-systemctl --user start podman.socket
+cmdr-bootstrap-docker-engine
+docker info
 ```
 
 ## Quick Start
@@ -62,16 +58,16 @@ make test-clean
 
 ```bash
 # Build and start
-podman-compose -f podman-compose.yml up --build
+docker compose -f compose.yml up --build
 
 # Run interactive shell
-podman-compose -f podman-compose.yml run --rm linux-test /bin/bash
+docker compose -f compose.yml run --rm linux-test /bin/bash
 
 # Stop
-podman-compose -f podman-compose.yml down
+docker compose -f compose.yml down
 
 # Clean up with volumes
-podman-compose -f podman-compose.yml down -v
+docker compose -f compose.yml down -v
 ```
 
 ## Container Details
@@ -140,7 +136,7 @@ Host Machine (CachyOS / macOS)
     │   ├─ home/ (Home Manager configs)
     │   └─ containers/
     │       ├─ Dockerfile
-    │       └─ podman-compose.yml
+    │       └─ compose.yml
     │
     └─ Podman (rootless)
         └─ Container: Ubuntu 24.04
@@ -154,24 +150,20 @@ Host Machine (CachyOS / macOS)
 ### Container won't start
 
 ```bash
-# Ensure podman socket is running
-systemctl --user status podman.socket
-systemctl --user start podman.socket
+# Ensure Docker is running
+systemctl status docker
 
 # Clean rebuild
 make test-clean
 make test
 ```
 
-### Short image name resolution error
+### Docker daemon unavailable
 
-If you see: `short-name "ubuntu:24.04" did not resolve to an alias`
-
-The `registries.conf` managed by `services.podman.enable = true` in Home Manager fixes this.
-Re-apply your Home Manager config:
+If `docker compose` cannot connect to the daemon, start Docker Engine on Linux:
 
 ```bash
-make switch-cachyos
+sudo systemctl enable --now docker
 ```
 
 ### Nix commands fail inside container

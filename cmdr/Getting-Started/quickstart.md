@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-30
+synced: 2026-05-31
 ---
 # Dev Control Plane - Quick Start
 
@@ -29,7 +29,7 @@ A Nix flake + Home Manager based development environment control plane that prov
 ## Prerequisites
 
 1. **Nix** with flakes enabled
-2. **Podman** — managed by Home Manager (`services.podman.enable = true`)
+2. **Docker Engine** on Linux or **Colima** on macOS for local container workflows
 3. **Git**
 4. **(Optional) direnv** — for automatic devShell activation (`use flake` in `.envrc`)
 
@@ -135,7 +135,7 @@ cmdr/
 │
 ├── containers/            # Podman testing environment
 │   ├── Dockerfile         # Ubuntu 24.04 + Nix
-│   ├── podman-compose.yml # Container orchestration
+│   ├── compose.yml        # Container orchestration
 │   └── README.md          # Container usage docs
 │
 ├── home/
@@ -160,16 +160,13 @@ cmdr/
 └── docs/                  # Project documentation
 ```
 
-## Podman Setup
+## Docker Setup
 
-Podman is configured declaratively via Home Manager. After applying your config, the socket is managed automatically:
+Docker CLI and Kind are configured declaratively via Home Manager. On Linux, Docker Engine is a system daemon managed by the OS package manager:
 
 ```bash
-# Verify socket is active
-systemctl --user status podman.socket
-
-# Test with hello-world
-podman run hello-world
+systemctl status docker
+docker run hello-world
 ```
 
 ### For Users (Deploying Configs)
@@ -195,7 +192,7 @@ nix flake check
 ### Container won't start
 
 ```bash
-systemctl --user status podman.socket
+systemctl status docker
 make test-clean  # Clean rebuild
 make test
 ```
