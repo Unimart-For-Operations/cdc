@@ -1,12 +1,12 @@
 ---
 source: cmdr
-synced: 2026-05-31
+synced: 2026-08-17
 ---
 # cmdr
 
 Declarative developer workstation managed by **Nix flakes** and **Home Manager**. Defines the complete environment (shell, editor, terminal, tools) for each physical machine the user owns.
 
-> **Org context:** Part of the [idpbuilder](https://github.com/idpbuilder) org, coordinated through the [meta](https://github.com/idpbuilder/meta) repo. Read meta's `AGENTS.md` for the full org map, conventions, roadmap, and cross-repo contracts (`Architecture/`). Sibling repos: **idpbuilder** (K8s platform), **idpctl** (deprecated CLI → unimart), **docs** (doc hub, transitional), **cdc** (Obsidian vault).
+> **Org context:** Part of the [Unimart-For-Operations](https://github.com/Unimart-For-Operations) org, coordinated through the [meta](https://github.com/Unimart-For-Operations/meta) repo. Read meta's `AGENTS.md` for the full org map, conventions, roadmap, and cross-repo contracts (`Architecture/`). Sibling repos: **idpbuilder** (K8s platform), **idpctl** (deprecated CLI → unimart), **docs** (doc hub, transitional), **cdc** (Obsidian vault).
 
 ## Critical Concept
 
@@ -31,8 +31,7 @@ home/
     ├── cli/{graduated,incubating,sandbox}/
     ├── tui/{graduated,incubating,sandbox}/
     ├── gui/{graduated,incubating,sandbox}/
-    ├── work/                        Work-specific modules
-    └── _shared/theme/              Catppuccin Frappe shared palette
+    └── _shared/fonts/              Shared font config (terminal metrics)
 ```
 
 ## Tiered Module System

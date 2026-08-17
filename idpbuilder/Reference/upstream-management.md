@@ -1,6 +1,6 @@
 ---
 source: idpbuilder
-synced: 2026-05-30
+synced: 2026-08-17
 ---
 # Upstream Management
 
@@ -18,8 +18,8 @@ git fetch upstream --tags
 Verify:
 ```bash
 git remote -v
-# origin    git@github.com:idpbuilder/idpbuilder.git (fetch)
-# origin    git@github.com:idpbuilder/idpbuilder.git (push)
+# origin    git@github.com:Unimart-For-Operations/idpbuilder.git (fetch)
+# origin    git@github.com:Unimart-For-Operations/idpbuilder.git (push)
 # upstream  git@github.com:cnoe-io/idpbuilder.git (fetch)
 # upstream  git@github.com:cnoe-io/idpbuilder.git (push)
 ```

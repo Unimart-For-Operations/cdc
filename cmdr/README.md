@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-31
+synced: 2026-08-17
 ---
 # Dev Control Plane Documentation
 
@@ -70,9 +70,6 @@ This documentation structure mirrors the Nix implementation - organized into the
 - Kitty, Alacritty (incubating)
 - WezTerm (sandbox)
 
-#### Work Configurations
-- [UPMC](Modules/Work/upmc.md) - UPMC work environment
-
 #### Containers
 - [Container Testing](Modules/Containers/README.md) - Docker testing workflow
 
@@ -103,8 +100,7 @@ home/04-modules/tui/incubating/  →  TUI tools (maturing)
 home/04-modules/gui/graduated/   →  GUI tools (stable)
 home/04-modules/gui/incubating/  →  GUI tools (maturing)
 home/04-modules/gui/sandbox/     →  GUI tools (experimental, opt-in)
-home/04-modules/_shared/theme/   →  Shared theme system (Catppuccin Frappe)
-home/04-modules/work/            →  Work-specific configs (UPMC)
+home/04-modules/_shared/fonts/   →  Shared font config (terminal metrics)
 ```
 
 ### Tier System (CNCF-style)
@@ -159,12 +155,11 @@ make tiers                 # View module adoption tiers
 
 ## Project Statistics
 
-- **Modules**: 33 (26 graduated, 5 incubating, 1 sandbox, + 1 work)
+- **Modules**: 32 (26 graduated, 5 incubating, 1 sandbox)
 - **Hosts**: 4 active (2 macOS, 2 Arch Linux)
 - **Platforms**: 2 (macOS, Linux)
 - **Features**: 3 core (cli, tui, gui) + base
--- **Theme**: Catppuccin Frappe (now documented in `docs/Reference/theme.md`)
-- **Neovim Distributions**: 2 (AstroNvim, Nixvim)
+-- **Neovim Distributions**: 2 (AstroNvim, Nixvim)
 
 ---
 
@@ -188,4 +183,3 @@ make tiers                 # View module adoption tiers
 **Obsidian Users**: Run `make sync-docs` to copy this documentation to `~/Documents/cmdr/Professional/organizations/idpbuilder/cmdr/`. Run `make pull-docs` to pull Obsidian edits back.
 
 **Last Updated**: 2026-03-22
-

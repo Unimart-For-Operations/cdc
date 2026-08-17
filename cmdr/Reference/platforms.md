@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-31
+synced: 2026-08-17
 ---
 # Nix Platform Support
 

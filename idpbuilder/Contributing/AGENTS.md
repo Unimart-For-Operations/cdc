@@ -1,12 +1,12 @@
 ---
 source: idpbuilder
-synced: 2026-05-30
+synced: 2026-08-17
 ---
 # idpbuilder
 
 Private fork of [cnoe-io/idpbuilder](https://github.com/cnoe-io/idpbuilder) — a Kubernetes-based Internal Developer Platform builder. The GitHub fork relationship was intentionally broken to allow private hosting.
 
-> **Org context:** Part of the [idpbuilder](https://github.com/idpbuilder) org, coordinated through the [meta](https://github.com/idpbuilder/meta) repo. Read meta's `AGENTS.md` for the full org map, conventions, roadmap, and cross-repo contracts (`Architecture/`). Sibling repos: **cmdr** (Nix workstation config), **idpctl** (deprecated CLI → unimart), **docs** (doc hub, transitional), **cdc** (Obsidian vault).
+> **Org context:** Part of the [Unimart-For-Operations](https://github.com/Unimart-For-Operations) org, coordinated through the [meta](https://github.com/Unimart-For-Operations/meta) repo. Read meta's `AGENTS.md` for the full org map, conventions, roadmap, and cross-repo contracts (`Architecture/`). Sibling repos: **cmdr** (Nix workstation config), **idpctl** (deprecated CLI → unimart), **docs** (doc hub, transitional), **cdc** (Obsidian vault).
 
 ## Architecture
 
@@ -30,15 +30,16 @@ make build               # Compile the binary (generates CRDs, embeds manifests)
 make test                # Run unit tests
 make e2e                 # Run end-to-end tests
 make embedded-resources  # Regenerate embedded manifests from hack/ scripts
-make fetch-upstream      # Fetch latest from cnoe-io/idpbuilder
-make upstream-status     # Show ahead/behind counts vs upstream
-make cherry-pick COMMIT=<sha>  # Cherry-pick a specific upstream commit
 make sync-docs           # Sync docs to cdc vault
 ```
 
 ## Upstream Management
 
 Changes from upstream are cherry-picked, not merged. Load the `upstream-mgmt` skill for the full workflow.
+
+This directory is not its own git repo — it is tracked in-tree by the meta repo, so upstream sync targets
+live in the **meta** Makefile (`make fetch-upstream`, `make upstream-status`, `make cherry-pick COMMIT=<sha>`,
+etc., run from the meta root). See meta's `AGENTS.md`.
 
 **Important:** The Go module path is `github.com/cnoe-io/idpbuilder` — this matches upstream intentionally. References to `cnoe-io` in Go source files and `go.mod` are expected and correct.
 

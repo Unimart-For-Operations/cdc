@@ -1,22 +1,30 @@
 ---
 source: meta
-synced: 2026-05-31
+synced: 2026-08-17
 ---
 # unimart
 
-Your one-stop shop for the [idpbuilder](https://github.com/idpbuilder) organization. A unified CLI that manages workstation configuration, IDP platform lifecycle, documentation, and cross-repo coordination.
+Your one-stop shop for the [Unimart-For-Operations](https://github.com/Unimart-For-Operations) organization. A unified CLI that manages workstation configuration, IDP platform lifecycle, documentation, and cross-repo coordination.
 
 See [TOOLING.md](TOOLING.md) for the boundary between `unimart`, Make, CI, and shell completion. See [PROVISIONING.md](PROVISIONING.md) for the physical-host provisioning contract.
 
 ## Quick Start
 
 ```bash
-git clone --recurse-submodules git@github.com:idpbuilder/meta.git
+git clone --recurse-submodules git@github.com:Unimart-For-Operations/meta.git
 cd meta
-make init
+go run . deli doctor
 ```
 
-`make init` handles everything: submodule init, Nix/Homebrew prerequisites, host detection, configuration apply, and installing the `unimart` binary to `~/.local/bin/`.
+Use the CLI as the source of truth for onboarding:
+
+```bash
+# if dependencies are missing
+unimart deli bootstrap
+
+# or from source before installation
+go run . deli bootstrap
+```
 
 After setup, reload your shell and use `unimart` directly:
 
@@ -107,9 +115,10 @@ Back-of-house inventory management.
 unimart stockroom status     Show submodule state (dirty, ahead/behind, current ref)
 unimart stockroom drift      Check submodule pointers vs remote HEAD
 unimart stockroom update     Pull latest main for all submodules
-unimart stockroom sync       Push all org repos to their remotes
 unimart stockroom check      Validate cross-repo contracts (CI)
 ```
+
+The repo-level Makefile no longer owns onboarding or org-wide orchestration. It is intentionally a thin build/install convenience wrapper; the authoritative workflows live in the CLI.
 
 ## Repositories
 
@@ -119,14 +128,14 @@ unimart stockroom check      Validate cross-repo contracts (CI)
 | [idpbuilder](idpbuilder/) | Kubernetes-based IDP builder (private fork of cnoe-io/idpbuilder) | Go |
 | [idpctl](idpctl/) | CLI lifecycle tool for idpbuilder (deprecated — absorbed into unimart) | Go |
 | [docs](docs/) | Documentation aggregation hub (transitional — being replaced by cdc) | Shell/Markdown |
-| [cdc](unimart-employee-handbooks/cdc/) | Obsidian vault — synced doc mirrors + org knowledge base | Markdown |
+| [cdc](unimart-employee-handbooks/cdc/) | Obsidian vault — synced doc mirrors + org knowledge base (github.com/idpbuilder/cdc) | Markdown |
 
 ## Install Methods
 
 | Method | Command | Notes |
 |--------|---------|-------|
-| `make init` | Full onboarding (recommended) | Installs unimart as step 6/7 |
-| `make install` | Build + symlink to `~/.local/bin/` | Requires Go |
+| `go build .` | Build the binary locally | Fastest local development path |
+| `make install` | Build + symlink to `~/.local/bin/` | Convenience wrapper |
 | `nix build .` | Hermetic Nix build | Requires Nix |
 | `nix profile install .` | Install to Nix profile | Requires Nix |
 

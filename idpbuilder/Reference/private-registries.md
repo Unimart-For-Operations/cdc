@@ -1,6 +1,6 @@
 ---
 source: idpbuilder
-synced: 2026-05-30
+synced: 2026-08-17
 ---
 # Private registry authentication
 

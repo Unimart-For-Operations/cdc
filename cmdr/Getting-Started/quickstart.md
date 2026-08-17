@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-31
+synced: 2026-08-17
 ---
 # Dev Control Plane - Quick Start
 
@@ -63,6 +63,9 @@ make rollback
 ### Container Testing
 
 ```bash
+# Automated smoke test: build, provision, verify, teardown (Linux only)
+make test-run
+
 # Build and start Ubuntu test container (Linux only)
 make test
 
@@ -73,7 +76,7 @@ make test-shell
 make test-clean
 ```
 
-**Note:** Container tests are blocked on macOS due to emulation limitations. These tests are designed for native Linux systems only.
+**Note:** Container tests are blocked on macOS due to emulation limitations. These tests are designed for native Linux systems only — bare-metal NixOS hosts are fully supported (`virtualisation.docker`). `make test-run` provisions the `cmdr` host by default; use `make test-run HOST=<name>` for another cli/tui host.
 
 ### Development Shell
 
@@ -106,7 +109,7 @@ make update
 curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 
 # 2. Clone repository
-git clone git@github.com:idpbuilder/cmdr.git ~/cmdr
+git clone git@github.com:Unimart-For-Operations/cmdr.git ~/cmdr
 cd ~/cmdr
 
 # 3. Bootstrap prerequisites
@@ -143,7 +146,7 @@ cmdr/
 │   ├── 02-hosts/          # Host inventory (grouped by distro)
 │   ├── 03-features/       # base.nix (universal) + composable features (cli, tui, gui)
 │   └── 04-modules/        # Tool-specific configs organised by UI capability
-│       ├── _shared/       # Cross-module resources (theme/)
+│       ├── _shared/       # Cross-module resources (fonts/)
 │       ├── cli/           # TTY-safe, non-interactive tools
 │       │   └── graduated/ # atuin, aws, azure, bat, containerization, core-utils, direnv, eza, fonts, fzf, git, go, opencode, pulumi, python, ssh, starship, terraform, zoxide, zsh
 │       ├── tui/           # TTY-safe, full-screen (tmux, nvim, lazygit, yazi, + incubating: k9s, sesh)
@@ -153,7 +156,6 @@ cmdr/
 │       │   ├── graduated/
 │       │   ├── incubating/
 │       │   └── sandbox/
-│       └── work/          # upmc/ (work machines only)
 │
 ├── scripts/               # Automation (bootstrap.sh, inject-frontmatter.sh)
 │

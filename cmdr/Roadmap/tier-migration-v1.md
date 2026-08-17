@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-31
+synced: 2026-08-17
 ---
 # Tier Migration v1 -- Original Plan (Historical Reference)
 
@@ -199,8 +199,7 @@ home/04-modules/
 │   └── sandbox/
 │       └── wezterm/
 │
-└── work/
-    └── upmc/               # Unchanged
+
 ```
 
 ### 3.3 Module Metadata Headers
@@ -270,8 +269,7 @@ The `home/02-hosts/default.nix` engine is extended with:
    [3] feature modules (cli, tui, gui)
    [4] desktop modules (hyprland, dms)
    [5] sandbox modules (opt-in per host)
-   [6] work modules (when work = true)
-   [7] host-specific overrides (default.nix)
+   [6] host-specific overrides (default.nix)
    ```
 
 ### 3.6 Updated meta.nix Files
@@ -286,14 +284,13 @@ The `home/02-hosts/default.nix` engine is extended with:
   features = [ "cli" "tui" "gui" ];
 }
 
-# apple-macbook-m3-pro (macOS work laptop)
+# apple-macbook-m3-pro (macOS laptop)
 {
   description = "MacBook Pro M3 Pro (mortimera)";
   system = "aarch64-darwin";
   username = "mortimera";
   homeDirectory = "/Users/mortimera";
   features = [ "cli" "tui" "gui" ];
-  work = true;
 }
 
 # arch/cmdr (TTY-only -- no gui feature)
@@ -426,7 +423,7 @@ Do this first because it fixes the duplication that would make directory moves m
 | 1.3 | Extract `darwinIgnore` variable in zsh eza aliases | Medium | `cli/zsh/default.nix` |
 | 1.4 | Remove duplicate `terraform-ls` from `nvim/lsp-tools.nix` | Medium | `tui/nvim/lsp-tools.nix` |
 | 1.5 | Remove duplicate `copy-on-select` in ghostty | Low | `gui/ghostty/default.nix` |
-| 1.6 | Clean unused function parameters | Low | `gui.nix`, `fonts/default.nix`, `work/upmc/default.nix` |
+| 1.6 | Clean unused function parameters | Low | `gui.nix`, `fonts/default.nix` |
 
 ### Phase 2: Tier Restructure (The Big Move)
 
@@ -452,13 +449,13 @@ Final sweep to clean up technical debt and add operational tooling.
 |---|------|----------|---------|
 | 3.1 | Migrate UPMC shell functions to `programs.zsh.initContent` | Medium | Remove the glob shim in zsh module |
 | 3.2 | Delete `scripts/docs-split-plan.sh` | Medium | Dead planning script |
-| 3.3 | Clean `work/upmc/platform-linux.nix` | Medium | Remove or populate the empty file |
+| 3.3 | Clean module-specific platform variants | Medium | Remove dead files or populate placeholders |
 | 3.4 | Makefile: extract macOS rejection boilerplate | Medium | 4 test targets share identical message |
 | 3.5 | Makefile: address host shortcut maintenance | Medium | 8 targets require manual updates per host |
 | 3.6 | Makefile: rename `tty` to `test-tty` | Medium | Naming consistency |
 | 3.7 | Add `make tiers` reporting target | Medium | Script that scans tier directories and prints table |
 | 3.8 | Add `make promote` target | Medium | Moves module between tiers, updates imports |
-| 3.9 | Fix hardcoded `ss` alias path | Medium | Guard behind conditional or move to work/upmc |
+| 3.9 | Fix hardcoded `ss` alias path | Medium | Guard behind conditional or move to platform-specific module |
 | 3.10 | Fix hardcoded sesh dotfiles path | Medium | Make configurable |
 | 3.11 | Extract UPMC SSH `user = "mortimera"` | Medium | Variable at top of file |
 | 3.12 | Fix/remove 30 broken links in `docs/README.md` | Medium | Either create files or remove links |

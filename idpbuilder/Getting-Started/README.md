@@ -1,6 +1,6 @@
 ---
 source: idpbuilder
-synced: 2026-05-30
+synced: 2026-08-17
 ---
 # Getting Started
 
@@ -17,7 +17,7 @@ See [Contributing/README.md](../Contributing/README.md) for detailed install ins
 
 ```bash
 # Clone and build
-git clone git@github.com:idpbuilder/idpbuilder.git
+git clone git@github.com:Unimart-For-Operations/idpbuilder.git
 cd idpbuilder
 make build
 
@@ -59,7 +59,7 @@ open https://argocd.cnoe.localtest.me:8443/applications
 ./idpbuilder delete
 ```
 
-Or use [idpctl](https://github.com/idpbuilder/idpctl) for a managed lifecycle:
+Or use [idpctl](https://github.com/Unimart-For-Operations/idpctl) for a managed lifecycle:
 
 ```bash
 idpctl down

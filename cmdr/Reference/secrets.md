@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-31
+synced: 2026-08-17
 ---
 # Secret Management with sops-nix
 
@@ -22,7 +22,7 @@ This repository uses [sops-nix](https://github.com/Mic92/sops-nix) for secure se
    - Public key: Listed in `.sops.yaml` (safe to commit)
 
 2. **Encrypted Secrets**: YAML files in `secrets/` directory
-   - Example: `secrets/upmc/env.yaml`
+   - Example: `secrets/universal/env.yaml`
    - Encrypted with age, safe to commit
 
 3. **sops-nix Module**: Integrated into flake.nix
@@ -60,7 +60,7 @@ If you're cloning this repository for the first time:
 
 4. **Update secrets** to include your key:
    ```bash
-   sops updatekeys secrets/upmc/env.yaml
+   sops updatekeys secrets/universal/env.yaml
    ```
 
 ### For Existing Hosts
@@ -80,7 +80,7 @@ If you're setting up an existing host listed in `.sops.yaml`:
 
 3. **Verify decryption**:
    ```bash
-   sops -d secrets/upmc/env.yaml
+   sops -d secrets/universal/env.yaml
    ```
 
 ## Managing Secrets
@@ -89,17 +89,17 @@ If you're setting up an existing host listed in `.sops.yaml`:
 
 ```bash
 # View decrypted secrets
-sops secrets/upmc/env.yaml
+sops secrets/universal/env.yaml
 
 # View in JSON format
-sops -d --output-type json secrets/upmc/env.yaml
+sops -d --output-type json secrets/universal/env.yaml
 ```
 
 ### Adding New Secrets
 
 ```bash
 # Edit existing secret file
-sops secrets/upmc/env.yaml
+sops secrets/universal/env.yaml
 
 # Create new secret file
 sops secrets/new-category/secrets.yaml
@@ -111,10 +111,10 @@ sops secrets/new-category/secrets.yaml
 
 ```bash
 # Edit a secret (will re-encrypt automatically)
-sops secrets/upmc/env.yaml
+sops secrets/universal/env.yaml
 
 # Update keys after adding a new host to .sops.yaml
-sops updatekeys secrets/upmc/env.yaml
+sops updatekeys secrets/universal/env.yaml
 ```
 
 ### Rotating Secrets
@@ -124,7 +124,7 @@ When rotating secrets (e.g., after a security incident):
 1. **Generate new credentials** from the service provider
 2. **Update encrypted files**:
    ```bash
-   sops secrets/upmc/env.yaml
+    sops secrets/universal/env.yaml
    # Update the values in the editor
    ```
 3. **Commit and deploy**:
@@ -144,10 +144,8 @@ When rotating secrets (e.g., after a security incident):
 
 ### Current Secret Files
 
-- `secrets/upmc/env.yaml`: UPMC work environment variables
-  - GitLab tokens
-  - CrowdStrike Falcon credentials
-  - SonarQube tokens
+- `secrets/universal/env.yaml`: Shared environment variables across hosts
+  - Machine-agnostic secrets only
 
 ### File Structure
 
@@ -183,19 +181,16 @@ The following hosts have age keys configured:
 Secrets are automatically integrated into your environment via Home Manager:
 
 ```nix
-# home/04-modules/work/upmc/env.nix
-{ config, lib, pkgs, ... }:
+{ config, ... }:
 
 {
   home.sessionVariables = {
-    GITLAB_TOKEN = config.sops.secrets."upmc/GITLAB_TOKEN".path;
-    # Secrets are available as file paths
+    EXAMPLE_TOKEN = "$(cat ${config.sops.secrets.example_token.path})";
   };
-  
-  sops.secrets = {
-    "upmc/GITLAB_TOKEN" = {
-      sopsFile = ../../secrets/upmc/env.yaml;
-    };
+
+  sops = {
+    defaultSopsFile = ../../secrets/universal/env.yaml;
+    secrets.example_token = { };
   };
 }
 ```
@@ -203,12 +198,12 @@ Secrets are automatically integrated into your environment via Home Manager:
 Alternatively, for environment variables, use the sops-nix templating feature:
 
 ```nix
-sops.templates."upmc-env".content = ''
-  export GITLAB_TOKEN="${config.sops.placeholder."upmc/GITLAB_TOKEN"}"
+sops.templates."app-env".content = ''
+  export EXAMPLE_TOKEN="${config.sops.placeholder."example_token"}"
 '';
 
 home.sessionVariables = {
-  UPMC_ENV_FILE = config.sops.templates."upmc-env".path;
+  APP_ENV_FILE = config.sops.templates."app-env".path;
 };
 ```
 
@@ -290,7 +285,7 @@ If you cloned before this migration, you should:
 # Re-clone the repository after force push
 cd ..
 mv dev-control-plane dev-control-plane.old
-git clone git@github.com:idpbuilder/cmdr.git
+git clone git@github.com:Unimart-For-Operations/cmdr.git
 ```
 
 ## Additional Resources

@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-31
+synced: 2026-08-17
 ---
 # Modules
 
@@ -13,13 +13,12 @@ Documentation for each module category, mirroring the `home/04-modules/` structu
 | **Hosts** | Host discovery and configuration | [Hosts](Hosts/README.md) |
 | **Containers** | Docker/Kind runtime and container testing | [Containers](Containers/README.md) |
 | **TUI** | Terminal UI tools (Neovim, tmux) | [Neovim](TUI/nvim.md), [AstroNvim](TUI/nvim-astro.md), [Obsidian](TUI/nvim-astro-obsidian.md) |
-| **Work** | Employer-specific configs | [UPMC](Work/upmc.md) |
 
 ## Structure
 
 ```
 home/04-modules/
-├── _shared/theme/ # Global Catppuccin Frappe palette, fonts, semantic colors
+├── _shared/fonts/ # Shared font config (terminal metrics)
 ├── cli/
 │   ├── graduated/ # Stable CLI tools (core-utils, git, zsh, starship, atuin, ...)
 │   ├── incubating/
@@ -31,7 +30,6 @@ home/04-modules/
 │   ├── graduated/ # Desktop apps (ghostty, hyprland, dms)
 │   ├── incubating/ # Under evaluation (kitty, alacritty)
 │   └── sandbox/   # Experimental (wezterm)
-└── work/          # Employer-specific (upmc/)
 ```
 
 Each module is a Nix file or directory that declares packages and Home Manager options. Modules are composed into features (`home/03-features/`), which are enabled per-host.

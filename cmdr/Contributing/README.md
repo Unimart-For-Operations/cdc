@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-31
+synced: 2026-08-17
 ---
 # Contributing Guide
 
@@ -21,7 +21,7 @@ The project manages the **"agnostic layer"** (tools, configs, shell, editors) wh
 - **Shell**: ZSH with modular configuration
 - **Editor**: 2 Neovim configurations via NVIM_APPNAME (AstroNvim + Nixvim)
 - **Terminal**: Ghostty (primary), Kitty, Alacritty
-- **Theme**: Catppuccin Frappe everywhere
+- **Theme**: Stock tool themes; DMS/matugen colors on DMS hosts
 - **Supported Platforms**: macOS (aarch64-darwin), Linux (x86_64-linux)
 
 ## Project Structure
@@ -56,7 +56,7 @@ cmdr/
 │   │   └── gui.nix              # GPU-accelerated terminal emulators (require display server)
 │   └── 04-modules/              # Modular tool configurations (CNCF-style tiers)
 │       ├── _shared/             # Cross-module resources
-│       │   └── theme/           # Catppuccin Frappe palette, semantic colors, fonts
+│       │   └── fonts/           # Shared terminal font metrics
 │       ├── cli/                 # TTY-safe, non-interactive tools
 │       │   └── graduated/       # 20 modules: atuin, aws, azure, bat, containerization, core-utils, direnv, eza, fonts, fzf, git, go, opencode, pulumi, python, ssh, starship, terraform, zoxide, zsh
 │       ├── tui/                 # TTY-safe, full-screen terminal apps
@@ -66,8 +66,6 @@ cmdr/
 │       │   ├── graduated/       # dms, ghostty, hyprland
 │       │   ├── incubating/      # alacritty, kitty
 │       │   └── sandbox/         # wezterm
-│       └── work/                # Employer-specific configurations
-│           └── upmc/            # UPMC work configs
 ├── scripts/                     # Automation scripts
 │   ├── bootstrap.sh             # Idempotent prerequisites installer (Xcode CLT, Homebrew, Nix)
 │   └── inject-frontmatter.sh   # Obsidian frontmatter injection for docs sync
@@ -118,7 +116,6 @@ cmdr/
 
 **Platform files should NOT contain:**
 - ❌ Large blocks of inline shell configuration (→ `04-modules/cli/graduated/zsh/platform-*.zsh.nix`)
-- ❌ Work-specific configurations (→ `04-modules/work/upmc/platform-*.nix`)
 - ❌ Duplicated functions across platforms (→ extract to shared modules)
 - ❌ Hardcoded username paths (use `$HOME` or `config.home.homeDirectory`)
 
@@ -151,41 +148,13 @@ Create separate files for platform-specific shell configs:
 
 **Platform-specific module variants pattern:**
 
-For modules with platform-specific implementations (like work configs), import platform variants at the **host level** to avoid infinite recursion:
-
-```nix
-# home/04-modules/work/upmc/default.nix
-{ config, pkgs, ... }:
-
-{
-  imports = [
-    ./git.nix
-    ./ssh.nix
-    ./env.nix
-    ./shell-functions.nix
-  ];
-  # NOTE: Platform-specific imports (platform-darwin.nix, platform-linux.nix)
-  # must be added at the host level - see example below
-}
-```
-
-```nix
-# home/02-hosts/macos/apple-macbook-m3-pro/default.nix
-{ ... }:
-
-{
-  imports = [
-    ../../04-modules/work/upmc              # Base module
-    ../../04-modules/work/upmc/platform-darwin.nix  # Platform variant
-  ];
-}
-```
+For modules with platform-specific implementations, keep shared logic in `default.nix`
+and split OS-specific logic into `platform-darwin.nix` and `platform-linux.nix` files.
 
 This approach:
 - Avoids infinite recursion (can't reference `pkgs` in module imports)
 - Keeps platform-specific implementations (e.g., BSD vs GNU date syntax)
-- Isolates work-specific platform settings from generic platform files
-- Shared functions in the base module, platform variants imported by host
+- Isolates platform settings from shared module logic
 
 ### 3. Modular Configuration
 
@@ -284,7 +253,7 @@ Only `bash`, `curl`, and `git` are required on the host. Everything else is inst
 The provisioning sequence for a new machine:
 
 ```bash
-git clone git@github.com:idpbuilder/cmdr.git ~/cmdr
+git clone git@github.com:Unimart-For-Operations/cmdr.git ~/cmdr
 cd ~/cmdr
 make bootstrap       # Installs Xcode CLT + Homebrew (macOS), Nix (all platforms)
 exec zsh             # Reload shell to pick up Nix in PATH
@@ -384,8 +353,11 @@ make list              # Show discovered hosts
 make tiers             # Show tier breakdown of all modules
 make promote           # Promote a module to a higher tier
 make test              # Start test container
+make test-run          # Automated provision + verify + teardown
 make test-shell        # Enter test container shell
 make test-tty          # TTY test
+make ci                # Run all local checks
+make ci-full           # ci + automated container test
 make fmt               # Format Nix code
 make update            # Update flake inputs
 make check             # Validate flake
@@ -515,8 +487,6 @@ footer
 | `home/04-modules/tui/graduated/nvim/lsp-tools.nix` | LSP tools | Global language servers, formatters |
 | `home/04-modules/cli/graduated/zsh/default.nix` | Shell config | ZSH settings + config files |
 | `home/04-modules/cli/graduated/zsh/platform-darwin.zsh.nix` | macOS shell | Platform-specific shell config for macOS |
-| `home/04-modules/work/upmc/platform-darwin.nix` | Work macOS | UPMC work-specific macOS configuration |
-| `home/04-modules/work/upmc/platform-linux.nix` | Work Linux | UPMC work-specific Linux configuration |
 | `darwin/system.nix` | nix-darwin system config | Homebrew casks, Nix daemon settings, stateVersion |
 
 ## Important Paths
@@ -531,20 +501,32 @@ footer
 
 ## Testing Strategy
 
+### Static + eval checks (`nix flake check`)
+
+The flake exposes a `checks` output that `nix flake check` builds:
+
+```bash
+make check                       # nix flake check
+```
+
+- `format` — `nixpkgs-fmt --check` over all `.nix` files
+- `theme-lint` — `scripts/check-theme-lint.sh`
+- `eval-<host>` — one per host; forces the full config to evaluate, including
+  darwin hosts evaluated from Linux
+
 ### Container Testing
 
-Safe, reproducible testing on Linux:
+Safe, reproducible integration testing on Linux (including bare-metal NixOS):
+
 ```bash
-make test-shell
-cd /workspace
-nix flake check                    # Validate syntax
-home-manager switch --flake .#cmdr
-nvim --version                     # Verify tools
+make test-run                    # automated: build, provision, verify, teardown
+make test-run HOST=<name>        # provision a different cli/tui host
+make test-shell                  # interactive shell
 ```
 
 **Container details:**
 - Base: Ubuntu 24.04 LTS
-- Platform: linux/amd64 (works on Apple Silicon)
+- Platform: linux/amd64 (native on x86_64 Linux)
 - Repository mounted at `/workspace` (read-only)
 - Auto-installs Nix on first run
 
@@ -553,7 +535,8 @@ nvim --version                     # Verify tools
 All CI runs locally — there are no remote CI services.
 
 1. **Pre-commit hook** - Runs gitleaks, `go fmt`, `go vet`, `nix fmt --check`, and theme lint on every commit (deployed via `unimart deli switch`, Nix-managed)
-2. **`make ci`** - Full local CI suite: secrets + formatting + flake check + `make doctor`
+2. **`make ci`** - Full local static suite: secrets + formatting + theme lint + flake check + `make doctor` + host eval
+3. **`make ci-full`** - `make ci` plus the automated container test (Linux only)
 
 See [CI Strategy](../Reference/ci.md) for full details.
 
@@ -589,13 +572,7 @@ See [CI Strategy](../Reference/ci.md) for full details.
 
 ### Current State
 
-⚠️ **WARNING**: Sensitive data is currently visible in `home/04-modules/work/upmc/env.nix`:
-- GitLab tokens
-- AWS credentials
-- Vault addresses
-- Client secrets
-
-**If this repository is public, rotate all secrets immediately.**
+Keep sensitive values encrypted in `secrets/` and never commit plaintext credentials.
 
 ### Recommended Improvements
 
@@ -626,7 +603,7 @@ Functions in `05-functions.zsh`:
 
 ### Kubernetes
 
-- K9s TUI with Catppuccin skin
+- K9s TUI (stock skin; DMS matugen skin on DMS hosts)
 - Kubectl aliases and autocompletion
 - Context switching integrated with AWS
 

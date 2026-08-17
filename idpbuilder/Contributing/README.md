@@ -1,6 +1,6 @@
 ---
 source: idpbuilder
-synced: 2026-05-30
+synced: 2026-08-17
 ---
 # Contributing Guide
 
@@ -14,7 +14,7 @@ Prerequisites:
 Clone and build:
 
 ```bash
-git clone git@github.com:idpbuilder/idpbuilder.git
+git clone git@github.com:Unimart-For-Operations/idpbuilder.git
 cd idpbuilder
 make build
 ./idpbuilder --help

@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-31
+synced: 2026-08-17
 ---
 # AstroNvim Configuration
 
@@ -56,3 +56,4 @@ git commit -m "chore: update nvim-astro lazy-lock"
 
 - [nvim.md](nvim.md) — Full Neovim setup (both distributions, LSP tools, wrapper scripts)
 - [nvim-astro-obsidian.md](nvim-astro-obsidian.md) — Obsidian/markdown-oxide integration in AstroNvim
+- [nvim-astro-stabilization-phase.md](nvim-astro-stabilization-phase.md) — Neovim 0.12 stabilization, lockfile hygiene, and compatibility notes

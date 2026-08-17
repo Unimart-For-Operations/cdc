@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-31
+synced: 2026-08-17
 ---
 # Architecture
 
@@ -33,7 +33,7 @@ Modules are organized into adoption tiers within each category:
 
 ```
 home/04-modules/
-├── _shared/theme/        # Global Catppuccin Frappe palette
+├── _shared/fonts/        # Shared font config (terminal metrics)
 ├── cli/
 │   ├── graduated/        # Stable, daily-use (20 modules)
 │   ├── incubating/       # Under evaluation
@@ -45,18 +45,16 @@ home/04-modules/
 │   ├── graduated/        # ghostty, hyprland, dms
 │   ├── incubating/       # kitty, alacritty
 │   └── sandbox/          # wezterm
-└── work/                 # Employer-specific (orthogonal to tiers)
 ```
 
 ### Layered System
 
-Six layers assemble in order:
+Five layers assemble in order:
 1. **Base** - Foundation (all hosts)
 2. **Platform** - OS-specific (darwin vs linux)
 3. **Features** - Capability bundles (cli, tui, gui)
 4. **Desktop** - Window managers (optional)
-5. **Work** - Employer configs (optional)
-6. **Host** - Machine-specific overrides
+5. **Host** - Machine-specific overrides
 
 ### Platform Isolation
 

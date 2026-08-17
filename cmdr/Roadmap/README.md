@@ -1,6 +1,6 @@
 ---
 source: cmdr
-synced: 2026-05-31
+synced: 2026-08-17
 ---
 # Roadmap
 
@@ -48,11 +48,32 @@ The first major structural initiative reorganized `home/04-modules/` with CNCF-s
 | **GUI Graduated** | 3 | dms, ghostty, hyprland |
 | **GUI Incubating** | 2 | alacritty, kitty |
 | **GUI Sandbox** | 1 | wezterm |
-| **Work** | 1 | upmc (orthogonal to tier system) |
 
 ### Remaining (Low Priority)
 
 - **Module metadata comment headers** -- structured `# Tier: / Category: / Since: / Description:` headers for every module's `default.nix`. Cosmetic; deferred indefinitely.
+
+---
+
+## Milestone: Stable Zsh Baseline
+
+Zsh is now functionally stable for daily use across core workflows.
+
+### What is solid
+
+- Reliable startup and shell behavior
+- Core aliases, functions, and scripts working as expected
+- No known blockers for regular interactive use
+
+### Known debt
+
+- Prompt/theme/UI is still rough
+- Visual consistency and polish are below target
+- Ergonomics still need cleanup (spacing, colors, information density)
+
+### Next focus
+
+Polish shell UX without destabilizing the current baseline.
 
 ---
 
