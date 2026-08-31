@@ -1,6 +1,6 @@
 ---
 source: meta
-synced: 2026-08-18
+synced: 2026-08-31
 ---
 # Nix Sandbox Live Terminal — Technical Architecture
 
